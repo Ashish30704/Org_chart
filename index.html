@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Organizational Chart</title>
+    <!-- <script src="https://balkangraph.com/js/latest/OrgChart.js"></script> -->
+    <script src="orgchart.js"></script>
+    
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #111;
+        }
+
+        h1 {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        #tree {
+            width: 90%;
+            height: 80vh; /* Occupies most of the viewport height */
+            margin: auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background: #222;
+        }
+    </style>
+</head>
+<body>
+    <h1>Company Organizational Chart</h1>
+    <div id="tree"></div>
+
+    <script>
+        // Fetch data dynamically from the backend
+        fetch('./getOrgChart.php')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched Data:', data); 
+                // Initialize Balkan Graphs with fetched data
+                var chart = new OrgChart(document.getElementById("tree"), {
+                    nodes: data, // Nodes fetched from backend
+                    nodeBinding: {
+                        field_0: "name", 
+                        field_1: "title", 
+                        img_0: "photo_url" 
+                    },
+                    template: "olivia",
+                    mode: "dark",
+                    // showXScroll: OrgChart.scroll.visible,
+                    // mouseScrool: OrgChart.action.true,
+                    enableDragDrop: true, // Allows drag-and-drop
+                    collapse: { level: 2 }, // Collapse nodes beyond level 2
+                    layout: OrgChart.tree, // Tree layout
+                    toolbar: {
+                        fullScreen: true,
+                        zoom: true,
+                        fit: true
+                    },
+                    menu: {
+                        // pdfPreview: {
+                        //     text: "PDF Preview",
+                        //     icon: OrgChart.icon.pdf(24, 24, '#7A7A7A'),
+                        //     onClick: preview
+                        // },
+                        pdf: { text: "Export PDF" },
+                        png: { text: "Export PNG" },
+                        svg: { text: "Export SVG" },
+                        csv: { text: "Export CSV" },
+                        xml: { text: "Export XML" },
+                        json: { text: "Export JSON" }
+                    },
+                    nodeMenu: {
+                        details: { text: "Details" },
+                        edit: { text: "Edit" },
+                        add: { text: "Add" },
+                        remove: { text: "Remove" }
+                    },
+                    
+                });
+            })
+            .catch(error => console.error('Error loading data:', error));
+    </script>
+</body>
+</html>
